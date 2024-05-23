@@ -21,15 +21,12 @@
 
 <style scoped>
 #basicLayout .header {
-  background: #42b983;
 }
 
 #basicLayout .content {
-  background: bisque;
 }
 
 #basicLayout .footer {
-  background: brown;
   padding: 16px;
   position: absolute;
   bottom: 0;

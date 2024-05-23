@@ -1,33 +1,52 @@
 <template>
-  <div id="gobalHeader">
-    <a-menu mode="horizontal">
-      <a-menu-item mode="horizontal" @menu-item-click="doMenuClick">
-        <div class="title-bar">
-          <img class="logo" src="../assets/Online-Judge-logo.png" />
-          <div class="title">Online-Judge</div>
-        </div>
-      </a-menu-item>
-      <a-menu-item v-for="item in routes" :key="item.path">
-        {{ item.name }}
-      </a-menu-item>
-    </a-menu>
-  </div>
+  <a-row id="gobalHeader" style="margin-bottom: 16px" align="center">
+    <a-col flex="auto">
+      <a-menu
+        mode="horizontal"
+        :selected-keys="selectesKeys"
+        @menu-item-click="doMenuClick"
+      >
+        <a-menu-item
+          key="0"
+          :style="{ padding: 0, marginRight: '38px' }"
+          disabled
+        >
+          <div class="title-bar">
+            <img class="logo" src="../assets/Online-Judge-logo.png" />
+            <div class="title">OJ</div>
+          </div>
+        </a-menu-item>
+        <a-menu-item v-for="item in routes" :key="item.path">
+          {{ item.name }}
+        </a-menu-item>
+      </a-menu>
+    </a-col>
+    <a-col flex="100px">
+      <div>{{ store.state.user?.loginUser?.username ?? "未登录" }}</div>
+    </a-col>
+  </a-row>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { routes } from "@/router/routes";
-import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { useStore } from "vuex";
 
-export default defineComponent({
-  computed: {
-    routes() {
-      return routes;
-    },
-  },
-});
 const router = useRouter();
+const store = useStore();
+/*console.log(store.state.user.loginUser);*/
+setTimeout(() => {
+  store.dispatch("user/getLoginUser");
+}, 3000);
+//默认主页
+const selectesKeys = ref(["/"]);
 
+//点击路由，跳转后，更新选中的菜单项高亮
+router.afterEach((to, from) => {
+  selectesKeys.value = [to.path];
+});
+//点击子菜单跳转到对应路由
 const doMenuClick = (key: string) => {
   router.push({
     path: key,
@@ -36,6 +55,10 @@ const doMenuClick = (key: string) => {
 </script>
 
 <style scoped>
+#gobalHeader {
+  box-shadow: #eee 5px 5px 5px;
+}
+
 .title-bar {
   display: flex;
   align-items: center;
