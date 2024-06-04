@@ -1,19 +1,27 @@
 import { StoreOptions } from "vuex";
+import ACCESSENUM from "@/access/accessEnum";
+import { UserControllerService } from "../../generated";
 
 export default {
   namespaced: true,
   //储存用户信息
   state: () => ({
     loginUser: {
-      username: "load",
-      role: "notLogin",
+      userName: "load",
     },
   }),
   // actions
   actions: {
-    getLoginUser({ commit, state }, payload) {
-      //TODO 获取远程登录信息
-      commit("update");
+    async getLoginUser({ commit, state }, payload) {
+      const res = await UserControllerService.getLoginUserUsingGet();
+      if (res.code === 0) {
+        commit("update", res.data);
+      } else {
+        commit("update", {
+          ...state.loginUser,
+          userRole: ACCESSENUM.NOT_LOGIN,
+        });
+      }
     },
   },
 
@@ -21,8 +29,9 @@ export default {
   // 更新用户状态
   mutations: {
     update(state, payload) {
-      state.loginUser.username = "caiwei";
-      state.loginUser.role = "admin";
+      console.log("payload = ", payload);
+      console.log("loginUser = ", state);
+      state.loginUser = payload;
     },
   },
 } as StoreOptions<any>;

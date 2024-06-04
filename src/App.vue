@@ -1,26 +1,31 @@
 <template>
   <div id="app">
-    <BasicLayout />
+    <template v-if="route.path.startsWith('/user')">
+      <router-view />
+    </template>
+    <template v-else>
+      <BasicLayout />
+    </template>
   </div>
 </template>
 
-<style></style>
+<style>
+#app {
+  height: 100%;
+}
+</style>
 <script setup lang="ts">
 import BasicLayout from "@/layouts/BasicLayout";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 
-const router = useRouter();
-const store = useStore();
-router.beforeEach((to, from, next) => {
-  console.log(to);
-  if (to.meta?.access === "admin") {
-    if (store.state.user.loginUser.role != "admin") {
-      next("/noAuth");
-    } else {
-      next();
-    }
-  }
-  next();
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+//全局初始化函数
+const init = () => {
+  console.log("hello ,welcome to my project!");
+};
+onMounted(() => {
+  init;
 });
 </script>
